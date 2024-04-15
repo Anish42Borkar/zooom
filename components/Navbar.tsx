@@ -23,6 +23,7 @@ const Navbar = () => {
 
       <div className="flex-between gap-5">
         <SignedIn>
+          {/* Mount the UserButton component */}
           <UserButton />
         </SignedIn>
 
