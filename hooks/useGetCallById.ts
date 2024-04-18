@@ -18,6 +18,7 @@ export const useGetCallById = (id: string | string[]) => {
         },
       });
 
+      console.log(calls);
       if (calls.length > 0) setCall(calls[0]);
 
       setIsCallLoading(false);
