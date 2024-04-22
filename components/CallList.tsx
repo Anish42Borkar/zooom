@@ -5,12 +5,15 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import MeetingCard from "./MeetingCard";
 import Loader from "./Loader";
+import { useToast } from "./ui/use-toast";
 
 const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   const { callRecordings, endedCalls, isLoading, upcomingCalls } =
     useGetCalls();
   const router = useRouter();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
+
+  const { toast } = useToast();
 
   const getCalls = () => {
     switch (type) {
@@ -42,10 +45,25 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   const noCallsMessage = getNoCallsMessage();
 
   useEffect(() => {
-    // console.log(endedCalls, upcomingCalls, callRecordings, calls);
-  }, [callRecordings, endedCalls, upcomingCalls]);
+    const fetchRecordings = async function name() {
+      try {
+        const callData = await Promise.all(
+          callRecordings.map((meeting) => meeting.queryRecordings())
+        );
 
-  if (!calls.length) return <Loader />;
+        const recordings = callData
+          .filter((call) => call.recordings.length > 0)
+          .flatMap((call) => call.recordings);
+
+        setRecordings(recordings);
+      } catch (error) {
+        toast({ title: "Try Again Later" });
+      }
+    };
+    if (type === "recordings") fetchRecordings();
+  }, [type, callRecordings]);
+
+  if (!calls?.length) return <Loader />;
 
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
@@ -62,13 +80,15 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
                   ? "/icons/previous.svg"
                   : type === "upcoming"
                   ? "/icons/upcoming.svg"
-                  : "/icons/recordings.cvg"
+                  : "/icons/recordings.svg"
               }
               title={
-                meetingCall.state.custom.description.substring(0, 26) || "No"
+                meetingCall.state?.custom?.description.substring(0, 26) ||
+                callRecording.filename.substring(0, 20) ||
+                "No description"
               }
               date={
-                meetingCall.state.startsAt?.toLocaleString() ||
+                meetingCall?.state?.startsAt?.toLocaleString() ||
                 callRecording?.start_time?.toString()
               }
               isPreviousMeeting={type === "ended"}
