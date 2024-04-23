@@ -1,15 +1,14 @@
 "use client";
-import Image from "next/image";
-import React, { useState } from "react";
-import HomeCard from "./HomeCard";
-import { useRouter } from "next/navigation";
-import MeetingModal from "./MeetingModal";
+import { useToast } from "@/components/ui/use-toast";
 import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
-import { Description } from "@radix-ui/react-dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { Textarea } from "./ui/textarea";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ReactDatePicker from "react-datepicker";
+import HomeCard from "./HomeCard";
+import MeetingModal from "./MeetingModal";
+import { Textarea } from "./ui/textarea";
+import { Input } from "./ui/input";
 
 const MeetingTypeList = () => {
   const router = useRouter();
@@ -178,6 +177,25 @@ const MeetingTypeList = () => {
         buttonText="Start Meeting"
         handleClick={createMeeting}
       />
+
+      <MeetingModal
+        isOpen={meetingState === "isJoiningMeeting"}
+        onClose={() => setMeetingState(undefined)}
+        title="Type the link here"
+        className="text-center"
+        buttonText="Join Meeting"
+        handleClick={() => {
+          router.push(values.link);
+        }}
+      >
+        <Input
+          placeholder="Meeting link"
+          className="border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, link: e.target.value }));
+          }}
+        />
+      </MeetingModal>
     </section>
   );
 };

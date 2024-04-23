@@ -83,9 +83,9 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
                   : "/icons/recordings.svg"
               }
               title={
-                meetingCall.state?.custom?.description.substring(0, 26) ||
-                callRecording.filename.substring(0, 20) ||
-                "No description"
+                meetingCall?.state?.custom?.description?.substring(0, 26) ||
+                callRecording?.filename?.substring(0, 20) ||
+                "Personal Meeting"
               }
               date={
                 meetingCall?.state?.startsAt?.toLocaleString() ||
