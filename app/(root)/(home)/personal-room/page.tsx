@@ -79,7 +79,7 @@ const PersonalRoom = () => {
             });
           }}
         >
-          Start Meeting
+          Copy Link
         </Button>
       </div>
     </section>
